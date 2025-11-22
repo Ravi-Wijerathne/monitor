@@ -132,32 +132,72 @@ monitor/
 
 ---
 
-## 🎨 Dashboard Preview
+## 🎨 Dashboard Overview
 
+```mermaid
+graph TB
+    subgraph Dashboard["🖥️ System Monitor Dashboard"]
+        subgraph Header["📊 System Information"]
+            H1["Hostname: MSI"]
+            H2["OS: Windows"]
+            H3["Uptime: 2d 3h 45m"]
+            H4["Kernel: 10.0"]
+        end
+        
+        subgraph Row1["Real-time Metrics"]
+            subgraph CPU["🔥 CPU Usage"]
+                CPU1["Overall: 45%"]
+                CPU2["Cores: 8"]
+                CPU3["Load: 1.2, 0.9, 0.7"]
+                CPU4["Per-Core Usage"]
+            end
+            
+            subgraph Memory["💾 Memory Usage"]
+                MEM1["RAM: 8.2/16 GB 51%"]
+                MEM2["Swap: 0.5/4 GB 12%"]
+                MEM3["Used/Free Breakdown"]
+            end
+            
+            subgraph Network["🌐 Network Traffic"]
+                NET1["⬆️ Upload: 2.3 MB/s"]
+                NET2["⬇️ Download: 12.5 MB/s"]
+                NET3["Interfaces: eth0, lo"]
+            end
+        end
+        
+        subgraph Row2["Storage"]
+            subgraph Disk["💿 Disk Usage"]
+                DISK1["C:\ 200/500 GB 40%"]
+                DISK2["D:\ 80/100 GB 80%"]
+            end
+        end
+        
+        subgraph Row3["Processes"]
+            subgraph Proc["⚙️ Running Processes Top 15"]
+                PROC1["chrome: 45.2% CPU, 12.3% MEM"]
+                PROC2["node: 11.5% CPU, 4.2% MEM"]
+                PROC3["code: 8.3% CPU, 3.1% MEM"]
+            end
+        end
+    end
+    
+    style Dashboard fill:#1e293b,stroke:#334155,stroke-width:2px,color:#fff
+    style Header fill:#334155,stroke:#475569,color:#fff
+    style Row1 fill:#1e293b,stroke:#334155,color:#fff
+    style Row2 fill:#1e293b,stroke:#334155,color:#fff
+    style Row3 fill:#1e293b,stroke:#334155,color:#fff
+    style CPU fill:#dc2626,stroke:#ef4444,color:#fff
+    style Memory fill:#8b5cf6,stroke:#a78bfa,color:#fff
+    style Network fill:#06b6d4,stroke:#22d3ee,color:#fff
+    style Disk fill:#f59e0b,stroke:#fbbf24,color:#fff
+    style Proc fill:#6366f1,stroke:#818cf8,color:#fff
 ```
-┌────────────────────────────────────────────────────────────────────────────────┐
-│                    SYSTEM MONITOR DASHBOARD                                     │
-│                 Real-time system resource monitoring                            │
-├────────────────────────────────────────────────────────────────────────────────┤
-│  Hostname: MSI         OS: Windows    Uptime: 2d 3h 45m    Kernel: 10.0       │
-├──────────────────────────┬──────────────────────────┬────────────────────────────┤
-│   🔥 CPU Usage           │   💾 Memory Usage        │   🌐 Network Traffic       │
-│   Overall: 45%           │   RAM: 8.2/16 GB (51%)   │   ⬆️  Upload: 2.3 MB/s     │
-│   [████████░░░░░░]       │   [██████████░░░░]       │   ⬇️  Download: 12.5 MB/s  │
-│   Cores: 8               │   Swap: 0.5/4 GB (12%)   │                            │
-│   Load: 1.2, 0.9, 0.7    │   [███░░░░░░░░░░]        │   Interfaces: eth0, lo     │
-├──────────────────────────┴──────────────────────────┴────────────────────────────┤
-│   💿 Disk Usage                                                                 │
-│   C:\   200GB / 500GB (40%)  [████████░░░░░░░░░░]                             │
-│   D:\    80GB / 100GB (80%)  [████████████████░░░░]                           │
-├────────────────────────────────────────────────────────────────────────────────┤
-│   ⚙️  Running Processes (Top 15)                                                │
-│   PID    Name              CPU%    MEM%    Status                              │
-│   1234   chrome           45.2%   12.3%    Running                             │
-│   5678   node             11.5%    4.2%    Running                             │
-│   9012   code             8.3%     3.1%    Running                             │
-└────────────────────────────────────────────────────────────────────────────────┘
-```
+
+**Live Features:**
+- 🔄 **Auto-refresh every 1 second** via WebSocket
+- 📈 **Color-coded progress bars** (Green < 60%, Yellow 60-80%, Red > 80%)
+- 🎨 **Dark theme** with smooth animations
+- 📱 **Responsive layout** adapts to screen size
 
 ---
 
