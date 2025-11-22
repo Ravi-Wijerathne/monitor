@@ -1,104 +1,89 @@
-# Real-Time Server Resource Monitor
+# System Monitor
 
-🚀 **A powerful real-time system monitoring dashboard built with Elixir and Phoenix LiveView**
+```
+   _____ __  __ _____ _______ ______ __  __   __  __  ____  _   _ _____ _______ ____  _____  
+  / ____|\ \/ // ____|__   __|  ____|  \/  | |  \/  |/ __ \| \ | |_   _|__   __/ __ \|  __ \ 
+ | (___  \  /| (___    | |  | |__  | \  / | | \  / | |  | |  \| | | |     | | | |  | | |__) |
+  \___ \  \/  \___ \   | |  |  __| | |\/| | | |\/| | |  | | . ` | | |     | | | |  | |  _  / 
+  ____) |     ____) |  | |  | |____| |  | | | |  | | |__| | |\  |_| |_    | | | |__| | | \ \ 
+ |_____/     |_____/   |_|  |______|_|  |_| |_|  |_|\____/|_| \_|_____|   |_|  \____/|_|  \_\
+```
 
-This is a web-based HTOP alternative that provides real-time monitoring of server resources including CPU, memory, disk, network, and running processes - all updated automatically without page refresh.
+**Real-Time Server Resource Monitor** built with **Elixir & Phoenix LiveView**
 
-## ✨ Features
+---
 
-- **📊 Real-time CPU Monitoring**
-  - Overall CPU usage percentage
-  - Per-core usage visualization
-  - Load averages (1m, 5m, 15m)
+## 🎯 Features
 
-- **💾 Memory Statistics**
-  - Total, used, and free RAM
-  - Memory usage percentage
-  - Swap memory tracking
+- 📊 **CPU Monitoring** - Overall + per-core usage, load averages
+- 💾 **Memory Tracking** - RAM + Swap usage with percentages
+- 💿 **Disk Usage** - All partitions with color-coded warnings
+- 🌐 **Network Traffic** - Upload/download speeds in real-time
+- ⚙️  **Process Management** - Top 15 processes by CPU usage
+- 🖥️  **System Info** - Hostname, OS, uptime, kernel version
+- 🔄 **Auto-Updates** - Real-time updates every 1 second via WebSocket
+- 🎨 **Beautiful UI** - Dark theme with TailwindCSS
 
-- **💿 Disk Usage**
-  - Multiple disk/partition monitoring
-  - Used and free space
-  - Usage percentage with color-coded alerts
+---
 
-- **🌐 Network Traffic**
-  - Upload/download speeds (MB/s)
-  - Total transferred data
-  - Active network interfaces
+## ⚡ Quick Start
 
-- **⚙️ Process Management**
-  - Top 15 processes by CPU usage
-  - Process ID, name, CPU%, and memory%
-  - Real-time process status
+### Automated Setup (Recommended)
 
-- **🖥️ System Information**
-  - Hostname
-  - Operating system
-  - Uptime
-  - Kernel version
-  - System architecture
+**Windows Batch:**
+```batch
+start.bat
+```
 
-- **🔄 Auto-updating Dashboard**
-  - Updates every 1 second via WebSocket
-  - No page refresh needed
-  - Multiple users can monitor simultaneously
+**PowerShell:**
+```powershell
+.\start.ps1
+```
 
-## 🛠️ Tech Stack
+Just double-click `start.bat` or run the PowerShell script. It will:
+- ✅ Check Elixir installation
+- ✅ Install dependencies
+- ✅ Setup Tailwind & ESBuild
+- ✅ Build assets
+- ✅ Start server
+- ✅ Open browser automatically at http://localhost:4000
 
-- **Backend**: Elixir with Phoenix Framework
-- **Real-time**: Phoenix LiveView (WebSocket-based)
-- **System Metrics**: Erlang `:os_mon` (`:cpu_sup`, `:memsup`, `:disksup`)
-- **Frontend**: TailwindCSS for styling
-- **Architecture**: GenServer for metrics collection + PubSub for broadcasting
-
-## 📋 Prerequisites
-
-- Elixir 1.14 or later
-- Erlang/OTP 25 or later
-- Node.js 16+ (for asset compilation)
-
-## 🚀 Installation & Setup
-
-1. **Clone or navigate to the project directory**
-   ```bash
-   cd c:\Users\nmmsr\Documents\SLIIT\Projects\monitor
-   ```
-
-2. **Install dependencies**
-   ```bash
-   mix deps.get
-   ```
-
-3. **Install Node.js dependencies**
-   ```bash
-   cd assets && npm install && cd ..
-   ```
-
-4. **Setup assets**
-   ```bash
-   mix assets.setup
-   ```
-
-5. **Compile assets**
-   ```bash
-   mix assets.build
-   ```
-
-## 🏃 Running the Application
-
-Start the Phoenix server:
+### Manual Setup
 
 ```bash
+# Install dependencies
+mix deps.get
+
+# Build assets
+cd assets
+..\\_build\tailwind-x64\tailwind.exe -i css\app.css -o ..\priv\static\assets\app.css -c tailwind.config.js
+cd ..
+_build\esbuild-windows-x64-0.17.11\esbuild.exe assets\js\app.js --bundle --target=es2017 --outdir=priv\static\assets --external:phoenix --external:phoenix_html --external:phoenix_live_view --external:topbar
+
+# Start server
 mix phx.server
 ```
 
-Or run inside IEx:
+Then open: **http://localhost:4000**
 
-```bash
-iex -S mix phx.server
-```
+---
 
-Now visit [`http://localhost:4000`](http://localhost:4000) in your browser!
+## 📦 Tech Stack
+
+**Backend:**
+- Elixir 1.14+
+- Phoenix Framework 1.7
+- Phoenix LiveView 0.20
+- Erlang `:os_mon` (`:cpu_sup`, `:memsup`, `:disksup`)
+- Phoenix PubSub
+
+**Frontend:**
+- Phoenix LiveView Components
+- TailwindCSS 3.3
+- ESBuild
+- JavaScript (Phoenix Hooks)
+
+---
 
 ## 🏗️ Architecture
 
@@ -107,32 +92,16 @@ Browser (LiveView)
      ↑        ↓  (WebSocket)
 Phoenix LiveView Process
      ↓
-Telemetry Collector (GenServer)
+SystemMonitor GenServer
      ↓
-Erlang Built-ins (:cpu_sup, :memsup, etc.)
+Metrics Collectors (CPU, Memory, Disk, Network, Processes, System)
      ↓
-System (CPU, Memory, Disk, Network)
+Native System Commands / Erlang Built-ins
+     ↓
+System Resources
 ```
 
-### How It Works
-
-1. **SystemMonitor GenServer** (`Monitor.SystemMonitor`)
-   - Collects metrics every 1 second
-   - Uses Erlang's `:os_mon` modules for reliable system data
-   - Broadcasts updates via Phoenix.PubSub
-
-2. **Metric Collectors** (in `lib/monitor/metrics/`)
-   - `CPU` - CPU usage and load averages
-   - `Memory` - RAM and swap usage
-   - `Disk` - Disk space and usage
-   - `Network` - Network traffic statistics
-   - `Processes` - Running processes information
-   - `System` - General system info
-
-3. **DashboardLive** (`MonitorWeb.DashboardLive`)
-   - Subscribes to PubSub for metric updates
-   - Renders real-time dashboard
-   - Updates automatically via LiveView
+---
 
 ## 📁 Project Structure
 
@@ -140,9 +109,9 @@ System (CPU, Memory, Disk, Network)
 monitor/
 ├── lib/
 │   ├── monitor/
-│   │   ├── application.ex           # Application supervision tree
-│   │   ├── system_monitor.ex        # Main GenServer for metrics
-│   │   └── metrics/                 # Metric collectors
+│   │   ├── application.ex          # Supervision tree
+│   │   ├── system_monitor.ex       # GenServer (metrics collector)
+│   │   └── metrics/                # Individual metric modules
 │   │       ├── cpu.ex
 │   │       ├── memory.ex
 │   │       ├── disk.ex
@@ -150,103 +119,207 @@ monitor/
 │   │       ├── processes.ex
 │   │       └── system.ex
 │   └── monitor_web/
-│       ├── endpoint.ex
-│       ├── router.ex
 │       ├── live/
-│       │   └── dashboard_live.ex    # Main dashboard LiveView
+│       │   └── dashboard_live.ex   # Main dashboard LiveView
 │       └── components/
-├── config/                          # Configuration files
-├── assets/                          # Frontend assets
-│   ├── css/
-│   ├── js/
-│   └── tailwind.config.js
-└── mix.exs                          # Dependencies
+│           └── core_components.ex  # Reusable components
+├── assets/                         # CSS, JS, Tailwind config
+├── config/                         # Configuration files
+├── start.bat                       # Automated startup (Batch)
+├── start.ps1                       # Automated startup (PowerShell)
+└── test/                           # Test files
 ```
-
-## 🎨 UI Customization
-
-The dashboard uses TailwindCSS. To customize colors or styling:
-
-1. Edit `assets/tailwind.config.js` for theme customization
-2. Modify `assets/css/app.css` for custom styles
-3. Update `lib/monitor_web/live/dashboard_live.ex` for layout changes
-
-## 🔧 Configuration
-
-### Update Interval
-
-To change the metric collection interval, edit `lib/monitor/system_monitor.ex`:
-
-```elixir
-@update_interval 1000  # milliseconds (default: 1 second)
-```
-
-### Process Limit
-
-To show more/fewer processes, edit the collection limit in `dashboard_live.ex`:
-
-```elixir
-processes: Processes.collect(15)  # Change 15 to your desired number
-```
-
-## 🌐 Cross-Platform Support
-
-The monitor automatically detects your operating system and uses appropriate commands:
-
-- **Linux/macOS**: Uses `ps`, `/proc/net/dev`, `uname`
-- **Windows**: Uses `tasklist`, `netstat`, `ver`
-- **All platforms**: Erlang `:os_mon` for core metrics
-
-## 🔐 Production Deployment
-
-For production deployment:
-
-1. Set environment variables:
-   ```bash
-   export SECRET_KEY_BASE=$(mix phx.gen.secret)
-   export PHX_HOST=your-domain.com
-   ```
-
-2. Build release:
-   ```bash
-   MIX_ENV=prod mix assets.deploy
-   MIX_ENV=prod mix release
-   ```
-
-3. Run the release:
-   ```bash
-   _build/prod/rel/monitor/bin/monitor start
-   ```
-
-## 🚀 Future Enhancements
-
-Potential features to add:
-
-- 📈 **Historical graphs** - CPU/Memory trends over time (using Chart.js)
-- 🔔 **Alerts** - Notifications for high CPU/memory/disk usage
-- 🖥️ **Multi-server monitoring** - Monitor multiple servers from one dashboard
-- ⚡ **Process killer** - Kill processes from the UI
-- 🔒 **Authentication** - Secure access with user login
-- 💾 **Database logging** - Store metrics in PostgreSQL for historical analysis
-
-## 📝 License
-
-This project is open source and available under the MIT License.
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to:
-
-1. Fork the project
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
-## 📧 Contact
-
-Built with ❤️ using Elixir and Phoenix LiveView
 
 ---
 
-**Happy Monitoring! 🎉**
+## 🎨 Dashboard Preview
+
+```
+┌────────────────────────────────────────────────────────────────────────────────┐
+│                    SYSTEM MONITOR DASHBOARD                                     │
+│                 Real-time system resource monitoring                            │
+├────────────────────────────────────────────────────────────────────────────────┤
+│  Hostname: MSI         OS: Windows    Uptime: 2d 3h 45m    Kernel: 10.0       │
+├──────────────────────────┬──────────────────────────┬────────────────────────────┤
+│   🔥 CPU Usage           │   💾 Memory Usage        │   🌐 Network Traffic       │
+│   Overall: 45%           │   RAM: 8.2/16 GB (51%)   │   ⬆️  Upload: 2.3 MB/s     │
+│   [████████░░░░░░]       │   [██████████░░░░]       │   ⬇️  Download: 12.5 MB/s  │
+│   Cores: 8               │   Swap: 0.5/4 GB (12%)   │                            │
+│   Load: 1.2, 0.9, 0.7    │   [███░░░░░░░░░░]        │   Interfaces: eth0, lo     │
+├──────────────────────────┴──────────────────────────┴────────────────────────────┤
+│   💿 Disk Usage                                                                 │
+│   C:\   200GB / 500GB (40%)  [████████░░░░░░░░░░]                             │
+│   D:\    80GB / 100GB (80%)  [████████████████░░░░]                           │
+├────────────────────────────────────────────────────────────────────────────────┤
+│   ⚙️  Running Processes (Top 15)                                                │
+│   PID    Name              CPU%    MEM%    Status                              │
+│   1234   chrome           45.2%   12.3%    Running                             │
+│   5678   node             11.5%    4.2%    Running                             │
+│   9012   code             8.3%     3.1%    Running                             │
+└────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## ✨ Key Features
+
+### CPU Monitoring
+- Overall CPU usage percentage
+- Per-core usage visualization
+- Load averages (1m, 5m, 15m)
+- Core count detection
+- Color-coded progress bars
+
+### Memory Monitoring
+- Total RAM (MB/GB)
+- Used/Free RAM
+- Swap usage tracking
+- Usage percentage
+- Visual progress indicators
+
+### Disk Usage
+- All mounted partitions
+- Total/Used/Free space (GB)
+- Usage percentage
+- Color warnings (>80% = yellow, >90% = red)
+- Mount point information
+
+### Network Traffic
+- Upload speed (MB/s)
+- Download speed (MB/s)
+- Total bytes transferred
+- Active network interfaces
+- Per-interface statistics
+
+### Process Management
+- Top 15 processes by CPU
+- PID, Name, Status
+- CPU % (color-coded)
+- Memory usage %
+- Command line details
+
+### System Information
+- Hostname
+- Operating system type
+- System uptime
+- Kernel version
+- Architecture (32/64-bit)
+
+---
+
+## 🚀 Requirements
+
+- **Elixir** 1.14 or higher
+- **Erlang/OTP** 24 or higher
+- **Windows** (or Linux/macOS with minor adjustments)
+
+### First-Time Installation
+
+If Elixir is not installed:
+
+```powershell
+# Install Chocolatey (if not installed)
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# Install Elixir
+choco install elixir -y
+```
+
+---
+
+## 🛠️ Development
+
+### Configuration
+
+Update settings in `config/dev.exs`:
+
+```elixir
+config :monitor, MonitorWeb.Endpoint,
+  http: [port: 4000],  # Change port here
+  debug_errors: true,
+  code_reloader: true
+```
+
+### Metrics Update Interval
+
+Modify in `lib/monitor/system_monitor.ex`:
+
+```elixir
+@update_interval 1000  # Change to 500 for 0.5s, 2000 for 2s, etc.
+```
+
+### Running Tests
+
+```bash
+mix test
+```
+
+---
+
+## 📚 Learn More
+
+- **Phoenix LiveView**: https://hexdocs.pm/phoenix_live_view
+- **Erlang :os_mon**: https://www.erlang.org/doc/man/os_mon_app.html
+- **GenServer**: https://hexdocs.pm/elixir/GenServer.html
+- **Phoenix PubSub**: https://hexdocs.pm/phoenix_pubsub
+
+---
+
+## 🎓 How It Works
+
+1. **SystemMonitor GenServer** collects metrics every 1 second
+2. **Six metric collectors** (CPU, Memory, Disk, Network, Processes, System) gather data
+3. **Phoenix PubSub** broadcasts updates to all connected clients
+4. **LiveView** receives updates via WebSocket and re-renders automatically
+5. **TailwindCSS** provides responsive, beautiful styling
+
+---
+
+## 🐛 Troubleshooting
+
+### Port 4000 already in use
+```bash
+# Kill process on port 4000
+netstat -ano | findstr :4000
+taskkill /PID <PID_NUMBER> /F
+```
+
+### Assets not loading
+```bash
+# Rebuild assets
+start.bat
+# or
+.\start.ps1
+```
+
+### Elixir not found after installation
+- Restart PowerShell/CMD
+- Check: `elixir --version`
+- Ensure PATH includes Elixir installation
+
+---
+
+## 🌟 Why This Project?
+
+- ✅ **Production-Ready** - Proper supervision, error handling, config
+- ✅ **Real-Time** - 1-second refresh via WebSocket
+- ✅ **Efficient** - Single GenServer, optimized collection
+- ✅ **Scalable** - PubSub allows unlimited viewers
+- ✅ **Beautiful** - Modern dark theme with TailwindCSS
+- ✅ **Well-Documented** - Comprehensive guides and comments
+- ✅ **Extensible** - Clean architecture, easy to enhance
+- ✅ **Cross-Platform** - Works on Windows, Linux, macOS
+
+---
+
+## 📝 License
+
+MIT License - Feel free to use and modify!
+
+---
+
+## 🎉 Happy Monitoring!
+
+Built with ❤️ using Elixir and Phoenix LiveView
