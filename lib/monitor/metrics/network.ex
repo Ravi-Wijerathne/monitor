@@ -31,18 +31,18 @@ defmodule Monitor.Metrics.Network do
 
   defp parse_proc_net_dev(output) do
     lines = String.split(output, "\n")
-    
-    interfaces = 
+
+    interfaces =
       lines
       |> Enum.drop(2)  # Skip header lines
       |> Enum.filter(&String.contains?(&1, ":"))
       |> Enum.map(fn line ->
         [interface | stats] = String.split(line, ~r/[:\s]+/, trim: true)
         stats = Enum.map(stats, &String.to_integer/1)
-        
+
         rx_bytes = Enum.at(stats, 0, 0)
         tx_bytes = Enum.at(stats, 8, 0)
-        
+
         %{
           interface: interface,
           rx_bytes: rx_bytes,
@@ -70,17 +70,17 @@ defmodule Monitor.Metrics.Network do
     try do
       # Parse Windows netstat -e output
       lines = String.split(output, ["\r\n", "\n"], trim: true)
-      
-      # Find the data line (after "Bytes" header)
-      bytes_index = Enum.find_index(lines, &String.contains?(&1, "Bytes"))
-      
-      if bytes_index && bytes_index + 1 < length(lines) do
-        data_line = Enum.at(lines, bytes_index + 1)
-        
-        # Split by whitespace and extract numbers
-        numbers = 
-          data_line
+
+      # Find the line containing "Bytes" - the data is on the SAME line
+      bytes_line = Enum.find(lines, &String.contains?(&1, "Bytes"))
+
+      if bytes_line do
+        # Extract just the numbers from the line (skip "Bytes" label)
+        # Format: "Bytes                     196353948        15952926"
+        numbers =
+          bytes_line
           |> String.split(~r/\s+/, trim: true)
+          |> Enum.drop(1)  # Skip "Bytes" label
           |> Enum.map(fn str ->
             # Remove commas and parse
             String.replace(str, ",", "")
@@ -90,10 +90,10 @@ defmodule Monitor.Metrics.Network do
               :error -> 0
             end
           end)
-        
+
         rx = Enum.at(numbers, 0, 0)
         tx = Enum.at(numbers, 1, 0)
-        
+
         %{
           interfaces: [],
           total_download_mb: bytes_to_mb(rx),
