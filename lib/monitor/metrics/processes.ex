@@ -22,9 +22,11 @@ defmodule Monitor.Metrics.Processes do
 
   defp collect_windows(limit) do
     try do
-      # Use tasklist for Windows
-      output = :os.cmd('tasklist') |> to_string()
-      parse_tasklist_output(output, limit)
+      # Use PowerShell Get-Process for better CPU info on Windows
+      # Export as CSV for easier parsing
+      cmd = ~c"powershell -Command \"Get-Process | Sort-Object CPU -Descending | Select-Object -First #{limit} ProcessName,Id,CPU,WorkingSet | ConvertTo-Csv -NoTypeInformation\""
+      output = :os.cmd(cmd) |> to_string()
+      parse_powershell_csv_output(output)
     rescue
       _ -> []
     end
@@ -60,29 +62,44 @@ defmodule Monitor.Metrics.Processes do
     |> Enum.filter(& &1)
   end
 
-  defp parse_tasklist_output(output, limit) do
-    lines = String.split(output, "\n")
+  defp parse_powershell_csv_output(output) do
+    lines = String.split(output, ["\r\n", "\n"], trim: true)
     
+    # Skip header line
     lines
-    |> Enum.drop(3)  # Skip header lines
-    |> Enum.take(limit)
-    |> Enum.filter(&(String.trim(&1) != ""))
+    |> Enum.drop(1)
     |> Enum.map(fn line ->
-      parts = String.split(line, ~r/\s+/, trim: true)
+      # Remove quotes and split by comma
+      parts = 
+        line
+        |> String.replace("\"", "")
+        |> String.split(",")
       
-      if length(parts) >= 5 do
+      if length(parts) >= 4 do
+        process_name = Enum.at(parts, 0) |> String.trim()
+        pid = Enum.at(parts, 1) |> String.trim()
+        cpu_str = Enum.at(parts, 2) |> String.trim()
+        mem_str = Enum.at(parts, 3) |> String.trim()
+        
+        cpu = parse_float(cpu_str)
+        mem_bytes = parse_integer(mem_str)
+        
+        # Convert to percentage (based on total memory from Memory collector)
+        mem_mb = mem_bytes / (1024 * 1024)
+        mem_percent = (mem_mb / 16085.52) * 100
+        
         %{
           user: "N/A",
-          pid: Enum.at(parts, 1),
-          cpu_percent: 0.0,
-          mem_percent: 0.0,
+          pid: pid,
+          cpu_percent: Float.round(cpu, 1),
+          mem_percent: Float.round(mem_percent, 1),
           vsz: "N/A",
-          rss: parse_memory(Enum.at(parts, 4)),
+          rss: "#{round(mem_mb)} MB",
           tty: "N/A",
-          stat: Enum.at(parts, 3),
+          stat: "Running",
           start: "N/A",
           time: "N/A",
-          command: Enum.at(parts, 0)
+          command: process_name
         }
       else
         nil
@@ -98,10 +115,10 @@ defmodule Monitor.Metrics.Processes do
     end
   end
 
-  defp parse_memory(str) do
-    str
-    |> String.replace(",", "")
-    |> String.replace("K", "")
-    |> String.trim()
+  defp parse_integer(str) do
+    case Integer.parse(str) do
+      {int, _} -> int
+      :error -> 0
+    end
   end
 end
