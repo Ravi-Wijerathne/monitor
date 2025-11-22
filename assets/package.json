@@ -1,0 +1,17 @@
+{
+  "name": "monitor",
+  "version": "0.1.0",
+  "description": "Real-Time Server Resource Monitor",
+  "private": true,
+  "scripts": {
+    "deploy": "cd .. && mix assets.deploy && rm -f _build/esbuild*"
+  },
+  "dependencies": {
+    "phoenix": "file:../deps/phoenix",
+    "phoenix_html": "file:../deps/phoenix_html",
+    "phoenix_live_view": "file:../deps/phoenix_live_view"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.11"
+  }
+}

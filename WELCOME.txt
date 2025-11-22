@@ -1,0 +1,210 @@
+
+   _____ __  __ _____ _______ ______ __  __   __  __  ____  _   _ _____ _______ ____  _____  
+  / ____|\ \/ // ____|__   __|  ____|  \/  | |  \/  |/ __ \| \ | |_   _|__   __/ __ \|  __ \ 
+ | (___  \  /| (___    | |  | |__  | \  / | | \  / | |  | |  \| | | |     | | | |  | | |__) |
+  \___ \  \/  \___ \   | |  |  __| | |\/| | | |\/| | |  | | . ` | | |     | | | |  | |  _  / 
+  ____) |     ____) |  | |  | |____| |  | | | |  | | |__| | |\  |_| |_    | | | |__| | | \ \ 
+ |_____/     |_____/   |_|  |______|_|  |_| |_|  |_|\____/|_| \_|_____|   |_|  \____/|_|  \_\
+                                                                                               
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+                         Real-Time Server Resource Monitor
+                           Built with Elixir & Phoenix LiveView
+                                   
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+🎯 FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ 📊 Real-time CPU monitoring (overall + per-core usage)
+ 💾 Memory tracking (RAM + Swap)
+ 💿 Disk usage (all partitions)
+ 🌐 Network traffic (upload/download speeds)
+ ⚙️  Process management (top 15 processes)
+ 🖥️  System information (OS, uptime, kernel)
+ 🔄 Auto-updates every 1 second via WebSocket
+ 🎨 Beautiful dark theme with TailwindCSS
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+⚡ QUICK START
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ Option 1: Automated Setup
+ ──────────────────────────
+   .\setup.ps1
+
+ Option 2: Manual Setup
+ ──────────────────────
+   mix deps.get
+   mix assets.setup
+   mix assets.build
+   mix phx.server
+
+ Then open: http://localhost:4000
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+🏗️  ARCHITECTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Browser (LiveView)
+       ↑        ↓  (WebSocket)
+  Phoenix LiveView Process
+       ↓
+  Telemetry Collector (GenServer)
+       ↓
+  Native System Commands / Erlang Built-ins
+       ↓
+  System (CPU, Memory, Disk, Network)
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+📦 TECH STACK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ Backend:
+   • Elixir 1.14+
+   • Phoenix Framework 1.7
+   • Phoenix LiveView 0.20
+   • Erlang :os_mon (:cpu_sup, :memsup, :disksup)
+   • Phoenix PubSub
+
+ Frontend:
+   • LiveView Components
+   • TailwindCSS 3.3
+   • ESBuild
+   • JavaScript (Phoenix Hooks)
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+📁 PROJECT STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ monitor/
+ ├── lib/
+ │   ├── monitor/
+ │   │   ├── application.ex          # Supervision tree
+ │   │   ├── system_monitor.ex       # GenServer (metrics collector)
+ │   │   └── metrics/                # Individual metric modules
+ │   │       ├── cpu.ex
+ │   │       ├── memory.ex
+ │   │       ├── disk.ex
+ │   │       ├── network.ex
+ │   │       ├── processes.ex
+ │   │       └── system.ex
+ │   └── monitor_web/
+ │       ├── live/
+ │       │   └── dashboard_live.ex   # Main dashboard
+ │       └── components/
+ ├── assets/                         # CSS, JS, Tailwind
+ ├── config/                         # Configuration files
+ └── test/                           # Test files
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+🎯 FEATURES IN DETAIL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ CPU Monitoring                    Memory Monitoring
+ ──────────────                    ─────────────────
+ ✓ Overall usage %                 ✓ Total RAM (MB)
+ ✓ Per-core usage                  ✓ Used RAM (MB)
+ ✓ Load averages (1m, 5m, 15m)    ✓ Free RAM (MB)
+ ✓ Core count                      ✓ Swap usage
+ ✓ Color-coded bars                ✓ Usage percentage
+
+ Disk Usage                        Network Traffic
+ ──────────                        ───────────────
+ ✓ All partitions                  ✓ Upload speed (MB/s)
+ ✓ Total/Used/Free (GB)            ✓ Download speed (MB/s)
+ ✓ Usage percentage                ✓ Total transferred
+ ✓ Color warnings                  ✓ Active interfaces
+ ✓ Mount points                    ✓ Per-interface stats
+
+ Process Management                System Info
+ ──────────────────                ───────────
+ ✓ Top 15 by CPU                   ✓ Hostname
+ ✓ PID, Name, Status               ✓ OS type
+ ✓ CPU % (color-coded)             ✓ Uptime
+ ✓ Memory %                        ✓ Kernel version
+ ✓ Command line                    ✓ Architecture
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+🎨 UI PREVIEW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ ┌────────────────────────────────────────────────────────────────────────────────┐
+ │                    SYSTEM MONITOR DASHBOARD                                     │
+ │                 Real-time system resource monitoring                            │
+ ├────────────────────────────────────────────────────────────────────────────────┤
+ │  Hostname: myserver    OS: Linux    Uptime: 2d 3h 45m    Kernel: 5.15.0       │
+ ├──────────────────────────┬──────────────────────────┬────────────────────────────┤
+ │   🔥 CPU Usage           │   💾 Memory Usage        │   🌐 Network Traffic       │
+ │   Overall: 45%           │   RAM: 8.2/16 GB (51%)   │   ⬆️  Upload: 2.3 MB/s     │
+ │   [████████░░░░░░]       │   [██████████░░░░]       │   ⬇️  Download: 12.5 MB/s  │
+ │   Cores: 8               │   Swap: 0.5/4 GB (12%)   │                            │
+ │   Load: 1.2, 0.9, 0.7    │   [███░░░░░░░░░░]        │   Interfaces: eth0, lo     │
+ ├──────────────────────────┴──────────────────────────┴────────────────────────────┤
+ │   💿 Disk Usage                                                                 │
+ │   /dev/sda1   200GB / 500GB (40%)  [████████░░░░░░░░░░]                       │
+ │   /dev/sdb1    80GB / 100GB (80%)  [████████████████░░░░]                     │
+ ├────────────────────────────────────────────────────────────────────────────────┤
+ │   ⚙️  Running Processes (Top 15)                                                │
+ │   PID    Name              CPU%    MEM%    Status                              │
+ │   1234   chrome           45.2%   12.3%    Running                             │
+ │   5678   postgres         11.5%    4.2%    Sleeping                            │
+ │   9012   node             8.3%     3.1%    Running                             │
+ └────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+🚀 GETTING STARTED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ 1. Ensure Elixir 1.14+ is installed
+ 2. Run: .\setup.ps1 (automated) or manual commands
+ 3. Open: http://localhost:4000
+ 4. Watch your system metrics update in real-time!
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+📚 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ README.md                Full documentation and features
+ QUICKSTART.md            Quick start guide
+ PROJECT_STRUCTURE.md     Architecture and code organization
+ SUMMARY.md               Complete project summary
+ setup.ps1                Automated setup script
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+✨ SPECIAL FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ ✅ Cross-Platform        Works on Linux, macOS, and Windows
+ ✅ Production-Ready      Proper supervision, error handling, config
+ ✅ Real-Time Updates     1-second refresh via WebSocket
+ ✅ Efficient             Single GenServer, optimized collection
+ ✅ Scalable              PubSub allows unlimited viewers
+ ✅ Beautiful UI          Modern dark theme with TailwindCSS
+ ✅ Well-Documented       Comprehensive guides and comments
+ ✅ Extensible            Clean architecture, easy to enhance
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+🎓 LEARN MORE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ Phoenix LiveView:  https://hexdocs.pm/phoenix_live_view
+ Erlang :os_mon:    https://www.erlang.org/doc/man/os_mon_app.html
+ GenServer:         https://hexdocs.pm/elixir/GenServer.html
+ Phoenix PubSub:    https://hexdocs.pm/phoenix_pubsub
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+                              HAPPY MONITORING! 🎉🖥️📊
+                                   
+═══════════════════════════════════════════════════════════════════════════════════════════════
