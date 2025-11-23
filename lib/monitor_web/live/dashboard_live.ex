@@ -188,6 +188,78 @@ defmodule MonitorWeb.DashboardLive do
           </.metric_card>
         </div>
 
+        <!-- GPU Usage -->
+        <%= if length(@metrics.gpu) > 0 do %>
+          <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+              <span>🎮</span> GPU Usage
+            </h2>
+            <div class="space-y-6">
+              <%= for gpu <- @metrics.gpu do %>
+                <div class="border-b border-gray-700 pb-4 last:border-0">
+                  <div class="mb-3">
+                    <h3 class="font-semibold text-lg"><%= gpu.name %></h3>
+                    <p class="text-xs text-gray-400"><%= gpu.vendor %> GPU <%= gpu.index %></p>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- GPU Usage -->
+                    <div>
+                      <div class="flex justify-between mb-2">
+                        <span class="text-sm text-gray-400">GPU Utilization</span>
+                        <span class="text-lg font-bold text-green-400"><%= gpu.gpu_usage %>%</span>
+                      </div>
+                      <.progress_bar value={gpu.gpu_usage} color="bg-green-500" />
+                    </div>
+
+                    <!-- Memory Usage -->
+                    <div>
+                      <div class="flex justify-between mb-2">
+                        <span class="text-sm text-gray-400">VRAM Usage</span>
+                        <span class="text-lg font-bold text-purple-400"><%= gpu.memory_usage %>%</span>
+                      </div>
+                      <.progress_bar value={gpu.memory_usage} color="bg-purple-500" />
+                      <div class="flex justify-between mt-1 text-xs text-gray-400">
+                        <span><%= gpu.memory_used %> MB used</span>
+                        <span><%= gpu.memory_total %> MB total</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Additional Stats -->
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    <%= if gpu.temperature > 0 do %>
+                      <div>
+                        <span class="text-xs text-gray-400">Temperature</span>
+                        <p class="font-semibold text-orange-400"><%= gpu.temperature %>°C</p>
+                      </div>
+                    <% end %>
+
+                    <%= if gpu.power_draw > 0 do %>
+                      <div>
+                        <span class="text-xs text-gray-400">Power Draw</span>
+                        <p class="font-semibold text-yellow-400"><%= Float.round(gpu.power_draw, 1) %>W</p>
+                      </div>
+                    <% end %>
+
+                    <%= if gpu.power_limit > 0 do %>
+                      <div>
+                        <span class="text-xs text-gray-400">Power Limit</span>
+                        <p class="font-semibold text-gray-300"><%= Float.round(gpu.power_limit, 1) %>W</p>
+                      </div>
+                    <% end %>
+
+                    <div>
+                      <span class="text-xs text-gray-400">Memory Free</span>
+                      <p class="font-semibold text-blue-400"><%= gpu.memory_free %> MB</p>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
         <!-- Disk Usage -->
         <%= if length(@metrics.disk) > 0 do %>
           <div class="bg-gray-800 rounded-lg p-6 mb-6">
@@ -203,9 +275,9 @@ defmodule MonitorWeb.DashboardLive do
                       <%= disk.used %> / <%= disk.total %> GB (<%= disk.percent_used %>%)
                     </span>
                   </div>
-                  <.progress_bar 
-                    value={disk.percent_used} 
-                    color={disk_color(disk.percent_used)} 
+                  <.progress_bar
+                    value={disk.percent_used}
+                    color={disk_color(disk.percent_used)}
                   />
                 </div>
               <% end %>
@@ -288,9 +360,9 @@ defmodule MonitorWeb.DashboardLive do
 
   def progress_bar(assigns) do
     ~H"""
-    <div class={["w-full bg-gray-700 rounded-full overflow-hidden", 
+    <div class={["w-full bg-gray-700 rounded-full overflow-hidden",
                  @size == "sm" && "h-2" || "h-3"]}>
-      <div 
+      <div
         class={["h-full rounded-full transition-all duration-300", @color]}
         style={"width: #{min(@value, 100)}%"}
       >

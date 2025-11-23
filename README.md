@@ -17,6 +17,7 @@
 
 - 📊 **CPU Monitoring** - Overall + per-core usage, load averages
 - 💾 **Memory Tracking** - RAM + Swap usage with percentages
+- 🎮 **GPU Monitoring** - NVIDIA/AMD/Intel GPU usage, VRAM, temperature, power
 - 💿 **Disk Usage** - All partitions with color-coded warnings
 - 🌐 **Network Traffic** - Upload/download speeds in real-time
 - ⚙️  **Process Management** - Top 15 processes by CPU usage
@@ -147,6 +148,14 @@ monitor/
 - Swap usage tracking
 - Usage percentage
 - Visual progress indicators
+
+### GPU Monitoring
+- GPU utilization percentage
+- VRAM usage (used/total/free)
+- GPU temperature (°C)
+- Power draw and limit (Watts)
+- Supports NVIDIA (nvidia-smi), AMD, and Intel GPUs
+- Multiple GPU detection
 
 ### Disk Usage
 - All mounted partitions
