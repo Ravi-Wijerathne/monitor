@@ -27,6 +27,10 @@ defmodule Monitor.SystemMonitor do
     # Start OS monitoring applications
     start_os_mon()
 
+    # Give cpu_sup time to collect baseline measurements (at least 1 second)
+    # Without this delay, cpu_sup returns 100% for all cores on first calls
+    Process.sleep(1500)
+
     # Collect initial metrics
     initial_state = collect_all_metrics()
 
