@@ -53,11 +53,11 @@ defmodule Monitor.Metrics.CPU do
       # Use PowerShell Get-Counter for CPU usage (WMIC is deprecated in Windows 11)
       cmd = ~c"powershell -Command \"(Get-Counter '\\Processor(_Total)\\% Processor Time').CounterSamples.CookedValue\""
       output = :os.cmd(cmd) |> to_string() |> String.trim()
-      
+
       # Parse the CPU percentage
       case Float.parse(output) do
         {cpu, _} -> round(cpu)
-        :error -> 
+        :error ->
           # Fallback: try to get from random value between reasonable range
           # This shouldn't happen but provides graceful degradation
           :rand.uniform(100)
@@ -70,12 +70,11 @@ defmodule Monitor.Metrics.CPU do
   defp get_cpu_utilization_unix do
     try do
       case :cpu_sup.util() do
-        util when is_number(util) -> round(util)
-        {:all, _total, _busy, list} when is_list(list) ->
-          # Average across all cores
-          total = Enum.reduce(list, 0, fn {_id, busy, _total, _}, acc -> acc + busy end)
-          round(total / length(list))
-        _ -> 0
+        util when is_number(util) ->
+          # util is already a percentage (e.g., 4.5 means 4.5%)
+          round(util)
+        _ ->
+          0
       end
     rescue
       _ -> 0
@@ -93,10 +92,10 @@ defmodule Monitor.Metrics.CPU do
     try do
       # Get number of cores
       core_count = System.schedulers_online()
-      
+
       # For simplicity, return estimated per-core based on overall usage
       overall = get_cpu_utilization_windows()
-      
+
       for i <- 0..(core_count - 1) do
         %{core: i, usage: overall}
       end
@@ -110,8 +109,11 @@ defmodule Monitor.Metrics.CPU do
       case :cpu_sup.util([:per_cpu]) do
         list when is_list(list) ->
           Enum.map(list, fn
-            {id, busy, _total, _} -> %{core: id, usage: round(busy)}
-            _ -> %{core: 0, usage: 0}
+            {id, busy, _idle, _} when is_number(busy) ->
+              # busy is already a percentage (e.g., 4.5 means 4.5%)
+              %{core: id, usage: round(busy)}
+            _ ->
+              %{core: 0, usage: 0}
           end)
 
         _ ->

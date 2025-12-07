@@ -81,7 +81,8 @@ defmodule MonitorWeb.DashboardLive do
                 </div>
               </div>
 
-              <!-- Per Core Usage -->
+              <!-- Per Core Usage - Temporarily hidden due to cpu_sup initialization issue -->
+              <%!--
               <%= if length(@metrics.cpu.per_core) > 0 do %>
                 <div class="space-y-1 mt-4">
                   <p class="text-xs text-gray-400 mb-2">Per Core Usage:</p>
@@ -96,6 +97,7 @@ defmodule MonitorWeb.DashboardLive do
                   <% end %>
                 </div>
               <% end %>
+              --%>
             </div>
           </.metric_card>
 
