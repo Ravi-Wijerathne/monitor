@@ -31,7 +31,8 @@
 
 ### Automated Setup (Recommended)
 
-**Windows Batch:**
+#### Windows:
+**Batch Script:**
 ```batch
 start.bat
 ```
@@ -41,7 +42,19 @@ start.bat
 .\start.ps1
 ```
 
-Just double-click `start.bat` or run the PowerShell script. It will:
+#### Linux/macOS:
+**Bash Script:**
+```bash
+./start.sh
+```
+
+**Setup Only:**
+```bash
+./setup.sh
+```
+
+Just run the appropriate script for your platform. It will:
+- ✅ Check and install system dependencies (erlang-dev, erlang-os-mon, inotify-tools)
 - ✅ Check Elixir installation
 - ✅ Install dependencies
 - ✅ Setup Tailwind & ESBuild
@@ -51,6 +64,22 @@ Just double-click `start.bat` or run the PowerShell script. It will:
 
 ### Manual Setup
 
+#### Linux/macOS:
+```bash
+# Install dependencies
+mix deps.get
+
+# Setup assets
+mix assets.setup
+
+# Build assets
+mix assets.build
+
+# Start server
+mix phx.server
+```
+
+#### Windows:
 ```bash
 # Install dependencies
 mix deps.get
@@ -126,8 +155,10 @@ monitor/
 │           └── core_components.ex  # Reusable components
 ├── assets/                         # CSS, JS, Tailwind config
 ├── config/                         # Configuration files
-├── start.bat                       # Automated startup (Batch)
-├── start.ps1                       # Automated startup (PowerShell)
+├── start.bat                       # Automated startup (Windows Batch)
+├── start.ps1                       # Automated startup (Windows PowerShell)
+├── start.sh                        # Automated startup (Linux/macOS Bash)
+├── setup.sh                        # Setup only (Linux/macOS)
 └── test/                           # Test files
 ```
 
@@ -191,11 +222,29 @@ monitor/
 
 - **Elixir** 1.14 or higher
 - **Erlang/OTP** 24 or higher
-- **Windows** (or Linux/macOS with minor adjustments)
+- **Operating Systems**: Windows, Linux, macOS
+
+### Linux/macOS Additional Requirements
+- `erlang-dev` - Erlang development headers (for compilation)
+- `erlang-os-mon` or full `erlang` package - OS monitoring capabilities
+- `inotify-tools` (Linux) or `fswatch` (macOS) - Optional, for live reload during development
+
+The automated scripts (`start.sh` and `setup.sh`) will check for and attempt to install these dependencies automatically.
 
 ### First-Time Installation
 
-If Elixir is not installed:
+#### Linux (Ubuntu/Debian):
+```bash
+sudo apt-get update
+sudo apt-get install elixir erlang erlang-dev inotify-tools
+```
+
+#### macOS:
+```bash
+brew install elixir
+```
+
+#### Windows:
 
 ```powershell
 # Install Chocolatey (if not installed)
