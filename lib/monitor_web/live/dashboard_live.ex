@@ -9,10 +9,27 @@ defmodule MonitorWeb.DashboardLive do
       Phoenix.PubSub.subscribe(Monitor.PubSub, @topic)
     end
 
-    # Get initial metrics
-    initial_metrics = Monitor.SystemMonitor.get_current_metrics()
+    initial_metrics = get_initial_metrics()
 
     {:ok, assign(socket, metrics: initial_metrics)}
+  end
+
+  defp get_initial_metrics do
+    try do
+      Monitor.SystemMonitor.get_current_metrics()
+    rescue
+      _ ->
+        %{
+          timestamp: DateTime.utc_now(),
+          cpu: %{overall_usage: 0, core_count: 0, load_average: %{one_min: 0, five_min: 0, fifteen_min: 0}, per_core: []},
+          memory: %{total: 0, used: 0, free: 0, percent_used: 0, swap: %{total: 0, used: 0, free: 0, percent_used: 0}},
+          disk: [],
+          network: %{interfaces: [], total_download_mb: 0, total_upload_mb: 0, download_speed_mbps: 0, upload_speed_mbps: 0},
+          processes: [],
+          system: %{hostname: "", os_type: "Windows", uptime: "", kernel_version: ""},
+          gpu: []
+        }
+    end
   end
 
   @impl true
@@ -73,11 +90,11 @@ defmodule MonitorWeb.DashboardLive do
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-400">Load Avg (1m):</span>
-                  <span><%= Float.round(@metrics.cpu.load_average.one_min, 2) %></span>
+                  <span><%= format_float(@metrics.cpu.load_average.one_min) %></span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-400">Load Avg (5m):</span>
-                  <span><%= Float.round(@metrics.cpu.load_average.five_min, 2) %></span>
+                  <span><%= format_float(@metrics.cpu.load_average.five_min) %></span>
                 </div>
               </div>
 
@@ -384,5 +401,6 @@ defmodule MonitorWeb.DashboardLive do
   defp cpu_color(_), do: "text-green-400"
 
   defp format_float(value) when is_float(value), do: Float.round(value, 1)
+  defp format_float(value) when is_integer(value), do: value * 1.0 |> Float.round(1)
   defp format_float(value), do: value
 end

@@ -16,7 +16,7 @@ defmodule Monitor.MixProject do
   def application do
     [
       mod: {Monitor.Application, []},
-      extra_applications: [:logger, :runtime_tools, :os_mon]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 

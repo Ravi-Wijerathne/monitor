@@ -20,7 +20,6 @@ defmodule Monitor.Metrics.CPU do
     case :os.type() do
       {:unix, _} ->
         try do
-          # Get load average from system
           {load1, load5, load15} = :cpu_sup.avg1() |> parse_load_avg()
           %{one_min: load1, five_min: load5, fifteen_min: load15}
         rescue
@@ -29,7 +28,6 @@ defmodule Monitor.Metrics.CPU do
         end
 
       {:win32, _} ->
-        # Windows doesn't have load average
         %{one_min: 0.0, five_min: 0.0, fifteen_min: 0.0}
     end
   end
