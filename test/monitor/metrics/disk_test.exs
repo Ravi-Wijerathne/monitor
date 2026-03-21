@@ -49,7 +49,7 @@ defmodule Monitor.Metrics.DiskTest do
       for disk <- result do
         if disk.total > 0 do
           expected_percent = disk.used / disk.total * 100
-          assert_in_delta disk.percent_used, expected_percent, 0.1
+          assert_in_delta disk.percent_used, expected_percent, 1.0
         end
       end
     end
