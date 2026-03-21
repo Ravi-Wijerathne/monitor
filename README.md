@@ -95,6 +95,30 @@ choco install elixir -y
 
 ---
 
+## Testing
+
+Run all tests:
+```bash
+mix test
+```
+
+Run tests with detailed output:
+```bash
+mix test --trace
+```
+
+Run a specific test file:
+```bash
+mix test test/monitor/metrics/cpu_test.exs
+```
+
+Run tests for a specific module:
+```bash
+mix test test/monitor/metrics/*
+```
+
+---
+
 ## Troubleshooting
 
 **Port 4000 already in use:**
