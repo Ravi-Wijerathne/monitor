@@ -29,16 +29,16 @@
 
 **Windows:**
 ```batch
-start.bat
+scripts\start.bat
 ```
 or
 ```powershell
-.\start.ps1
+.\scripts\start.ps1
 ```
 
 **Linux/macOS:**
 ```bash
-./start.sh
+./scripts/start.sh
 ```
 
 The script will install dependencies, build assets, start the server, and open http://localhost:4000
