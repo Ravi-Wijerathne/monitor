@@ -32,7 +32,7 @@
 
  Option 1: Automated Setup
  ──────────────────────────
-   .\setup.ps1
+   .\scripts\setup.ps1
 
  Option 2: Manual Setup
  ──────────────────────
