@@ -7,8 +7,8 @@ Write-Host "                   SYSTEM MONITOR - AUTOMATED SETUP" -ForegroundColo
 Write-Host "===============================================================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Change to script directory
-Set-Location $PSScriptRoot
+# Change to parent directory (project root)
+Set-Location (Split-Path $PSScriptRoot -Parent)
 
 # ==============================================================================
 # Step 1: Check for Elixir Installation

@@ -11,8 +11,8 @@ echo                   SYSTEM MONITOR - AUTOMATED SETUP
 echo ===============================================================================
 echo.
 
-REM Change to script directory
-cd /d "%~dp0"
+REM Change to parent directory (project root)
+cd /d "%~dp0.."
 
 REM ==============================================================================
 REM Step 1: Check for Elixir Installation

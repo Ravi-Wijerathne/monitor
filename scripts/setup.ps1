@@ -4,6 +4,9 @@
 Write-Host "🚀 System Monitor - Setup Script" -ForegroundColor Cyan
 Write-Host "================================`n" -ForegroundColor Cyan
 
+# Change to parent directory (project root)
+Set-Location (Split-Path $PSScriptRoot -Parent)
+
 # Check if Elixir is installed
 Write-Host "Checking for Elixir installation..." -ForegroundColor Yellow
 if (!(Get-Command "elixir" -ErrorAction SilentlyContinue)) {

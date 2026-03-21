@@ -11,8 +11,8 @@ echo "                   SYSTEM MONITOR - AUTOMATED SETUP"
 echo "==============================================================================="
 echo ""
 
-# Change to script directory
-cd "$(dirname "$0")"
+# Change to parent directory (project root)
+cd "$(dirname "$0")/.."
 
 # ==============================================================================
 # Step 0: Check Critical System Dependencies
