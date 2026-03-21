@@ -2,7 +2,7 @@ import Config
 
 config :monitor, MonitorWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "monitor_test_secret_key_base_at_least_64_bytes_long_for_testing",
+  secret_key_base: String.duplicate("abcdefghijklmnopqrstuvwxyz123456", 4),
   server: false
 
 config :logger, level: :warning
